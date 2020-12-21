@@ -8,10 +8,13 @@ public class MainClass2 {
 		
 			// establish the connection
 			// do the activity
-			// close the connection
+			
 			
 		} catch(Exception e) {
+			// i caught an exception! i saved my code from crashing!
 			
+		} finally {
+			// close the connection
 		}
 	}
 	
