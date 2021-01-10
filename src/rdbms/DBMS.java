@@ -14,9 +14,12 @@ public class DBMS {
 	private Statement statement;
 	private ResultSet resultSet;
 	
-	private String url = "jdbc:mysql://localhost/wnd_ariya_db";
-	private String username = "root";
-	private String password = "root";
+	private final String url = "jdbc:mysql://localhost/wnd_ariya_db";
+	private final String username = "root";
+	private final String password = "root";
+	
+	
+	// SINGLETON CLASS bcz we have implemented SINGLETON DESIGN PATTERN
 	
 	private static DBMS dbms = null;
 	
@@ -32,30 +35,11 @@ public class DBMS {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 	}
 	
-	public int retrieveLatestId() {
-		
-		int id = -1;
-		String sql = "SELECT * FROM wnd_ariya_db.ig_gen;";
-		
-		try {
-			connection = DriverManager.getConnection(url, username, password);
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery(sql);
-			
-			while(resultSet.next()) {
-				id = resultSet.getInt("next_id");
-			}
-			
-		} catch (SQLException e) {
-			System.err.println("Unable to create record");
-		}
-		finally {
-			statement = null;
-			connection = null;
-		}
-		
-		return id;
-	}
+	
+	// ---------- DB CRUD START HERE ----------- //
+	
+	
+	// ----------------- Create -----------------//
 	
 	public void createStudentEntry(Student student) {
 		
@@ -100,8 +84,36 @@ public class DBMS {
 			connection = null;
 		}
 	}
+	
 
-	public Student getStudentEntry(int id) {
+	// ---------------- Retrieve ----------------//
+		
+	public int retrieveLatestId() {
+		
+		int id = -1;
+		String sql = "SELECT * FROM wnd_ariya_db.ig_gen;";
+		
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(sql);
+			
+			while(resultSet.next()) {
+				id = resultSet.getInt("next_id");
+			}
+			
+		} catch (SQLException e) {
+			System.err.println("Unable to fetch record");
+		}
+		finally {
+			statement = null;
+			connection = null;
+		}
+		
+		return id;
+	}
+	
+	public Student retrieveStudentEntry(int id) {
 		String sql = "SELECT * FROM wnd_ariya_db.student WHERE id = " + id + ";";
 		Student student = null;
 		try {
@@ -119,7 +131,7 @@ public class DBMS {
 			}
 			
 		} catch (SQLException e) {
-			System.err.println("Unable to create record");
+			System.err.println("Unable to fetch record");
 		}
 		finally {
 			statement = null;
@@ -129,4 +141,63 @@ public class DBMS {
 		return student;
 	}
 
+	public List<Student> retrieveAllStudentEntries() {
+		String sql = "SELECT * FROM wnd_ariya_db.student;";
+		List<Student> students = new ArrayList<Student>();
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(sql);
+			
+			while(resultSet.next()) {
+				students.add( new Student( resultSet.getInt("id"), resultSet.getString("name"), resultSet.getInt("roll"), resultSet.getInt("standard") ));
+			}
+			
+		} catch (SQLException e) {
+			System.err.println("Unable to fetch record");
+		}
+		finally {
+			statement = null;
+			connection = null;
+		}
+		
+		return students;
+	}
+	
+	
+	// ----------------- Update -----------------//
+	
+	public void updateStudentEntry(Student student) {
+		
+		String sql = "UPDATE `wnd_ariya_db`.`student` SET `name` = '" + student.getName() + "', `roll` = " + student.getRoll() + ", `standard` = " + student.getStandard() + " WHERE `id` = " + student.getId() + ";";
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+			statement = connection.createStatement();
+			statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			System.err.println("Unable to update record");
+		}
+		finally {
+			statement = null;
+			connection = null;
+		}
+	}
+	
+	// ----------------- Delete -----------------//
+	
+	public void deleteStudentEntry(int id) {
+		// backticks
+		String sql = "DELETE FROM wnd_ariya_db.student WHERE (id = '" + id + "');";
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+			statement = connection.createStatement();
+			statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			System.err.println("Unable to update record");
+		}
+		finally {
+			statement = null;
+			connection = null;
+		}
+	}
 }

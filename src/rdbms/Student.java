@@ -1,5 +1,7 @@
 package rdbms;
 
+import java.util.List;
+
 public class Student {
 
 	private int id;
@@ -47,10 +49,35 @@ public class Student {
 	
 	public static Student getStudent(int id) {
 		try {
-			return DBMS.getDBMSObject().getStudentEntry(id);
+			return DBMS.getDBMSObject().retrieveStudentEntry(id);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Unable to retrieve");
 			return null;
+		}
+	}
+	
+	public static List<Student> getStudents() {
+		try {
+			return DBMS.getDBMSObject().retrieveAllStudentEntries();
+		} catch (ClassNotFoundException e) {
+			System.err.println("Unable to retrieve");
+			return null;
+		}
+	}
+	
+	public static void updateStudent(Student student) {
+		try {
+			DBMS.getDBMSObject().updateStudentEntry(student);
+		} catch (ClassNotFoundException e) {
+			System.err.println("Unable to update");
+		}
+	}
+	
+	public static void deleteStudent(int id) {
+		try {
+			DBMS.getDBMSObject().deleteStudentEntry(id);
+		} catch (ClassNotFoundException e) {
+			System.err.println("Unable to delete");
 		}
 	}
 
